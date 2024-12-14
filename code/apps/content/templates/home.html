@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container py-3">
+        <h1>Welcome to Our Store</h1>
+        <p>Browse our latest products below or explore all the products we offer!</p>
+
+        <h2>Featured Products</h2>
+        <div class="row">
+            {% for product in products|slice:":3" %}
+                <div class="col-md-4">
+                    <div class="card mb-4 rounded-3 shadow-sm">
+                        <img src="{{ product.img_url }}" class="card-img-top" alt="Product Image">
+                        <div class="card-header py-3">
+                            <h4 class="my-0 fw-normal">{{ product.title }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ product.description }}</p>
+                            <p><strong>Price:</strong> ${{ product.price }}</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No products available at the moment.</p>
+            {% endfor %}
+        </div>
+
+        <h2>All Products</h2>
+        <div class="row">
+            {% for product in products %}
+                <div class="col-md-4">
+                    <div class="card mb-4 rounded-3 shadow-sm">
+                        <img src="{{ product.img_url }}" class="card-img-top" alt="Product Image">
+                        <div class="card-header py-3">
+                            <h4 class="my-0 fw-normal">{{ product.title }}</h4>
+                        </div>
+                        <div class="card-body">
+                            <p>{{ product.description }}</p>
+                            <p><strong>Price:</strong> ${{ product.price }}</p>
+                            <p><strong>Category:</strong> {{ product.category }}</p>
+                            <a href="#" class="btn btn-primary">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <p>No products available at the moment.</p>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

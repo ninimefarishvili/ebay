@@ -2,7 +2,6 @@ from django.db import models
 from django.utils import timezone
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import AbstractUser
-# Create your models here.
 
 class Customer(models.Model):
     username = models.CharField(max_length=100, verbose_name="იუზერნეიმი")
@@ -14,12 +13,13 @@ class Customer(models.Model):
         return self.get_full_name()
 
     def get_full_name(self):
-        return f"{self.first_name} ".strip() or self.email
+        return f"{self.first_name}".strip() or self.email
 
     class Meta:
         ordering = ("-id",)
         verbose_name = "მომხმარებელი"
         verbose_name_plural = "მომხმარებლები"
+
 
 class Category(models.Model):
     title = models.CharField(max_length=20, verbose_name="დასახელება")
@@ -27,15 +27,21 @@ class Category(models.Model):
     def __str__(self) -> str:
         return self.title
 
-class Product(models.Model):
-    title = models.CharField(max_length=100, verbose_name="დასახელება")
-    description = models.TextField(verbose_name="აღწერა")
-    seller = models.ForeignKey(Customer, null=False, blank=False, related_name="product", on_delete=models.CASCADE)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    listing_date = models.DateField(null=False, blank=False, default=timezone.now())
-    quantity = models.IntegerField()
-    category = models.ForeignKey(Category, null=False, blank=False, on_delete=models.DO_NOTHING)
 
+class Product(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    price = models.DecimalField(max_digits=10, decimal_places=2)
+    quantity = models.PositiveIntegerField()
+    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    seller = models.ForeignKey(Customer, on_delete=models.CASCADE)
+    img_url = models.URLField(blank=True, null=True)  # Ensure this field is defined like this
+
+    def __str__(self):
+        return self.title
+
+    listing_date = models.DateField(null=False, blank=False, default=timezone.now())
+    
     def __str__(self) -> str:
         return self.title
 
@@ -44,6 +50,7 @@ class Product(models.Model):
         verbose_name = "პროდუქტი"
         verbose_name_plural = "პროდუქტები"
 
+
 class Cart(models.Model):
     customer = models.ForeignKey(Customer, null=False, blank=False, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=timezone.now())
@@ -51,9 +58,7 @@ class Cart(models.Model):
     def __str__(self) -> str:
         return f"{self.customer} - {self.created_at}"
     
-
     def add_to_cart(self, product, quantity=1):
-
         if product.quantity - quantity < 0:
             raise ValidationError("ნამეტანი ბევრი მოგივიდა, ძმა")
         
@@ -73,6 +78,7 @@ class Cart(models.Model):
     
     def get_total_price(self):
         return sum(item.total_price() for item in self.cart_items.all())
+
 
 class CartItem(models.Model):
     product = models.ForeignKey(
