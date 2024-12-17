@@ -90,7 +90,6 @@ def create_product(request):
 
         category = Category.objects.get(id=category_id)
 
-        
         new_product = Product(
             title=title,
             description=description,
@@ -101,9 +100,10 @@ def create_product(request):
         )
         new_product.save()
 
-        
         return redirect('home') 
 
-    
     categories = Category.objects.all() 
     return render(request, 'create_product.html', {'categories': categories})
+
+
+        
